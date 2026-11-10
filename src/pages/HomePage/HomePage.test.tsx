@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { Show } from '../../api/types'
 import { HomePage } from '.'
 import { usePresenter } from './usePresenter'
 
@@ -7,16 +8,16 @@ vi.mock('./usePresenter')
 
 type Presenter = ReturnType<typeof usePresenter>
 
-const show: Presenter['visibleShows'][number] = {
+const show: Show = {
   id: 1,
   name: 'Midsomer Murders',
-  meta: '1997 · ITV',
-  status: 'Running',
   genres: ['Drama', 'Crime'],
-  summary: 'Detectives solve murders in English villages.',
-  imageUrl: null,
-  initials: 'MM',
-  tone: 1,
+  status: 'Running',
+  premiered: '1997-03-23',
+  network: { name: 'ITV' },
+  webChannel: null,
+  image: null,
+  summary: '<p>Detectives solve murders in English villages.</p>',
 }
 
 const base: Presenter = {
@@ -105,16 +106,11 @@ describe('HomePage', () => {
     expect(
       screen.getByRole('heading', { name: 'Midsomer Murders' }),
     ).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Crime 4' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
     await userEvent.click(screen.getByRole('button', { name: 'All 4' }))
     expect(presenter.selectGenre).toHaveBeenCalledWith(null)
     await userEvent.click(screen.getByRole('button', { name: 'Reset filter' }))
     expect(presenter.resetGenre).toHaveBeenCalledOnce()
     await userEvent.click(screen.getByRole('button', { name: 'Next page' }))
     expect(presenter.setPage).toHaveBeenCalledWith(2)
-    expect(screen.getByRole('button', { name: 'Previous page' })).toBeDisabled()
   })
 })

@@ -75,7 +75,6 @@ describe('usePresenter', () => {
     expect(result.current.view).toBe('results')
     expect(result.current.resultsLabel).toBe('4 shows')
     expect(result.current.visibleShows.map((s) => s.id)).toEqual([1, 2, 3])
-    expect(result.current.visibleShows[0].summary).toBe('A show.')
     expect(result.current.pageCount).toBe(2)
 
     act(() => result.current.setPage(2))

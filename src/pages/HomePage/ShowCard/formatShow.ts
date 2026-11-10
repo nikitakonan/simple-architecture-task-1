@@ -1,4 +1,4 @@
-import type { Show } from '../../api/types'
+import type { Show } from '../../../api/types'
 
 /** Everything a show card renders, already formatted. */
 export type ShowView = {

@@ -1,60 +1,52 @@
 import styles from './Pagination.module.css'
+import { type PaginationProps, usePresenter } from './usePresenter'
 
-type PaginationProps = {
-  page: number
-  pageCount: number
-  rangeLabel: string
-  onChange: (page: number) => void
-}
-
-function Arrow({ d }: { d: string }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d={d} />
-    </svg>
-  )
-}
-
-export function Pagination({
-  page,
-  pageCount,
-  rangeLabel,
-  onChange,
-}: PaginationProps) {
-  const pages = Array.from({ length: pageCount }, (_, index) => index + 1)
+export function Pagination(props: PaginationProps) {
+  const {
+    rangeLabel,
+    hasControls,
+    pages,
+    canGoBack,
+    canGoForward,
+    goBack,
+    goForward,
+    goTo,
+  } = usePresenter(props)
 
   return (
     <nav className={styles.pagination} aria-label="Pagination">
       <p className={styles.range}>{rangeLabel}</p>
-      {pageCount > 1 && (
+      {hasControls && (
         <div className={styles.controls}>
           <button
             type="button"
             className={styles.button}
             aria-label="Previous page"
-            disabled={page <= 1}
-            onClick={() => onChange(page - 1)}
+            disabled={!canGoBack}
+            onClick={goBack}
           >
-            <Arrow d="M15 6l-6 6 6 6" />
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M15 6l-6 6 6 6" />
+            </svg>
           </button>
-          {pages.map((number) => (
+          {pages.map(({ number, isCurrent }) => (
             <button
               key={number}
               type="button"
               className={styles.button}
               aria-label={`Page ${number}`}
-              aria-current={number === page ? 'page' : undefined}
-              onClick={() => onChange(number)}
+              aria-current={isCurrent ? 'page' : undefined}
+              onClick={() => goTo(number)}
             >
               {number}
             </button>
@@ -63,10 +55,22 @@ export function Pagination({
             type="button"
             className={styles.button}
             aria-label="Next page"
-            disabled={page >= pageCount}
-            onClick={() => onChange(page + 1)}
+            disabled={!canGoForward}
+            onClick={goForward}
           >
-            <Arrow d="M9 6l6 6-6 6" />
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9 6l6 6-6 6" />
+            </svg>
           </button>
         </div>
       )}

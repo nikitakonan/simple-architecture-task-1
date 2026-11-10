@@ -1,6 +1,10 @@
-import { Chip } from '../../ui/Chip'
+import { Chip } from '../../../ui/Chip'
 import styles from './GenreFilter.module.css'
-import type { GenreOption } from './useGenreFilter'
+
+type GenreOption = {
+  name: string
+  count: number
+}
 
 type GenreFilterProps = {
   query: string

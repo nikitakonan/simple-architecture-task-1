@@ -1,11 +1,9 @@
-import type { ShowView } from './formatShow'
 import styles from './ShowCard.module.css'
+import { type ShowCardProps, usePresenter } from './usePresenter'
 
-type ShowCardProps = {
-  show: ShowView
-}
+export function ShowCard(props: ShowCardProps) {
+  const show = usePresenter(props)
 
-export function ShowCard({ show }: ShowCardProps) {
   return (
     <li className={styles.card}>
       <div className={styles.poster} data-tone={show.tone}>

@@ -1,4 +1,4 @@
-import type { Show } from '../../api/types'
+import type { Show } from '../../../api/types'
 import { formatShow } from './formatShow'
 
 const show: Show = {

@@ -1,6 +1,5 @@
 import { useDebounce } from '../../hooks/useDebounce'
 import { useShowSearch } from '../../hooks/useShowSearch'
-import { formatShow } from './formatShow'
 import { useGenreFilter } from './useGenreFilter'
 import { usePagination } from './usePagination'
 import { useSearchParam } from './useSearchParam'
@@ -62,7 +61,7 @@ export function usePresenter() {
     resetGenre: () => selectGenre(null),
     totalCount: total,
     resultsLabel,
-    visibleShows: pageItems.map(formatShow),
+    visibleShows: pageItems,
     page,
     pageCount,
     setPage,

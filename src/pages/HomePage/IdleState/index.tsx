@@ -1,4 +1,4 @@
-import { Chip } from '../../ui/Chip'
+import { Chip } from '../../../ui/Chip'
 import styles from './IdleState.module.css'
 
 type IdleStateProps = {
