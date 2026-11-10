@@ -19,7 +19,9 @@ export function usePresenter() {
   const hasQuery = query.trim() !== ''
 
   // Clearing the field resets right away instead of waiting for the debounce.
-  const { shows, status, retry } = useShowSearch(hasQuery ? debouncedQuery : '')
+  const { shows, status, resultsQuery, retry } = useShowSearch(
+    hasQuery ? debouncedQuery : '',
+  )
   const { genres, selectedGenre, selectGenre, filteredItems } =
     useGenreFilter(shows)
   const { page, pageCount, setPage, pageItems, firstIndex } = usePagination(
@@ -27,11 +29,13 @@ export function usePresenter() {
     PAGE_SIZE,
   )
 
-  let view: HomeView = 'results'
+  // While a new search loads, the previous results stay on screen (dimmed)
+  // instead of being replaced by the skeleton.
+  let view: HomeView = 'loading'
   if (!hasQuery) view = 'idle'
   else if (status === 'error') view = 'error'
-  else if (status !== 'success') view = 'loading'
-  else if (shows.length === 0) view = 'empty'
+  else if (shows.length > 0) view = 'results'
+  else if (status === 'success') view = 'empty'
 
   const total = shows.length
   const filtered = filteredItems.length
@@ -46,7 +50,8 @@ export function usePresenter() {
     clearQuery: () => setQuery(''),
     isSearching: hasQuery && (status === 'loading' || query !== debouncedQuery),
     view,
-    searchedFor: debouncedQuery.trim(),
+    isRefreshing: view === 'results' && status === 'loading',
+    searchedFor: resultsQuery,
     // Set only in the error state, so it can't leak into other views.
     errorMessage: view === 'error' ? ERROR_MESSAGE : null,
     retry,

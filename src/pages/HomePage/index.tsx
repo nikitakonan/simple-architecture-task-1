@@ -51,7 +51,11 @@ export function HomePage() {
               onSelect={presenter.selectGenre}
               onReset={presenter.resetGenre}
             />
-            <section className={styles.results} aria-label="Search results">
+            <section
+              className={styles.results}
+              aria-label="Search results"
+              aria-busy={presenter.isRefreshing}
+            >
               <ul className={styles.list}>
                 {presenter.visibleShows.map((show) => (
                   <ShowCard key={show.id} show={show} />

@@ -54,4 +54,22 @@ describe('useShowSearch', () => {
 
     expect(firstSignal?.aborted).toBe(true)
   })
+
+  it('keeps the previous shows while the next search loads', async () => {
+    vi.mocked(searchShows).mockResolvedValueOnce(results)
+    const { result, rerender } = renderHook(
+      ({ query }) => useShowSearch(query),
+      {
+        initialProps: { query: 'murder' },
+      },
+    )
+    await waitFor(() => expect(result.current.status).toBe('success'))
+
+    vi.mocked(searchShows).mockReturnValue(new Promise(() => {}))
+    rerender({ query: 'office' })
+
+    expect(result.current.status).toBe('loading')
+    expect(result.current.shows).toEqual([show])
+    expect(result.current.resultsQuery).toBe('murder')
+  })
 })

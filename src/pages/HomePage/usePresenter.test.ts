@@ -35,6 +35,7 @@ const retry = vi.fn()
 function mockSearch(overrides: Partial<Search>) {
   vi.mocked(useShowSearch).mockReturnValue({
     status: 'success',
+    resultsQuery: 'murder',
     shows: SHOWS,
     error: null,
     retry,
@@ -98,13 +99,16 @@ describe('usePresenter', () => {
     expect(result.current.selectedGenre).toBeNull()
   })
 
-  it('reports empty results and errors', () => {
+  it('picks the view for empty, stale and failed searches', () => {
     window.history.replaceState(null, '', '/?q=zxqv')
     mockSearch({ shows: [] })
     const { result, rerender } = renderHook(() => usePresenter())
     expect(result.current.view).toBe('empty')
     expect(result.current.errorMessage).toBeNull()
 
+    mockSearch({ status: 'loading' })
+    rerender()
+    expect(result.current.isRefreshing).toBe(true)
     mockSearch({ status: 'error', shows: [], error: 'Failed' })
     rerender()
     expect(result.current.view).toBe('error')

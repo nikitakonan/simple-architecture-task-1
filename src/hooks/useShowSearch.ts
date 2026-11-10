@@ -6,16 +6,26 @@ export type SearchStatus = 'idle' | 'loading' | 'success' | 'error'
 
 type SearchState = {
   status: SearchStatus
+  /** The query that `shows` (or `error`) belong to. */
+  resultsQuery: string
   shows: Show[]
   error: string | null
 }
 
-const IDLE: SearchState = { status: 'idle', shows: [], error: null }
+const IDLE: SearchState = {
+  status: 'idle',
+  resultsQuery: '',
+  shows: [],
+  error: null,
+}
 
 /**
  * Searches TVmaze for `query`. Every new query (or retry) aborts the request
  * that is still in flight, so a slow old response can never overwrite a newer
  * one. An empty query resets to the idle state without a request.
+ *
+ * While a new search loads, the previous `shows` and `resultsQuery` are kept,
+ * so the caller can keep showing them instead of a blank list.
  */
 export function useShowSearch(query: string) {
   const [state, setState] = useState<SearchState>(IDLE)
@@ -31,13 +41,13 @@ export function useShowSearch(query: string) {
     }
 
     const controller = new AbortController()
-    // Keep the previous shows while loading so the list doesn't jump around.
     setState((prev) => ({ ...prev, status: 'loading', error: null }))
 
     searchShows(trimmed, controller.signal)
       .then((results) => {
         setState({
           status: 'success',
+          resultsQuery: trimmed,
           shows: results.map((result) => result.show),
           error: null,
         })
@@ -46,6 +56,7 @@ export function useShowSearch(query: string) {
         if (controller.signal.aborted) return
         setState({
           status: 'error',
+          resultsQuery: trimmed,
           shows: [],
           error: error instanceof Error ? error.message : String(error),
         })

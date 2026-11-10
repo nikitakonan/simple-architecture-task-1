@@ -25,6 +25,7 @@ const base: Presenter = {
   clearQuery: vi.fn(),
   isSearching: false,
   view: 'idle',
+  isRefreshing: false,
   searchedFor: '',
   errorMessage: null,
   retry: vi.fn(),
@@ -63,7 +64,6 @@ describe('HomePage', () => {
 
   it('shows placeholders while loading', () => {
     renderWith({ query: 'mur', view: 'loading', isSearching: true })
-
     expect(screen.getByLabelText('Loading results')).toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent('Searching…')
   })

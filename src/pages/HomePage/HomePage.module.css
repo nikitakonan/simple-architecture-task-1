@@ -26,6 +26,12 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Previous results stay visible, dimmed, while a new search loads. */
+.results[aria-busy="true"] .list {
+  opacity: 0.5;
 }
 
 @media (max-width: 480px) {
