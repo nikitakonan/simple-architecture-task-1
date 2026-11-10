@@ -1,14 +1,16 @@
 import { ErrorState } from '../../components/ErrorState'
+
 import { EmptyState } from './EmptyState'
 import { GenreFilter } from './GenreFilter'
 import { Header } from './Header'
-import styles from './HomePage.module.css'
 import { IdleState } from './IdleState'
 import { LoadingState } from './LoadingState'
 import { Pagination } from './Pagination'
 import { SearchField } from './SearchField'
 import { ShowCard } from './ShowCard'
 import { usePresenter } from './usePresenter'
+
+import styles from './HomePage.module.css'
 
 export function HomePage() {
   const presenter = usePresenter()

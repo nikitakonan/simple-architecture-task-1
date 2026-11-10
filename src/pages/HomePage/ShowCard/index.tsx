@@ -1,5 +1,6 @@
-import styles from './ShowCard.module.css'
 import { type ShowCardProps, usePresenter } from './usePresenter'
+
+import styles from './ShowCard.module.css'
 
 export function ShowCard(props: ShowCardProps) {
   const show = usePresenter(props)

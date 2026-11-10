@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
 import type { Show } from '../../api/types'
-import { HomePage } from '.'
+
 import { usePresenter } from './usePresenter'
+
+import { HomePage } from '.'
 
 vi.mock('./usePresenter')
 

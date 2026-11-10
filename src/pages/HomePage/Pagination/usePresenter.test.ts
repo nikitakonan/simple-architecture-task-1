@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react'
+
 import { usePresenter } from './usePresenter'
 
 function setup(page: number, pageCount: number) {

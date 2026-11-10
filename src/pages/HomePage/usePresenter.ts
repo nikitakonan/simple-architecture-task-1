@@ -1,5 +1,6 @@
 import { useDebounce } from '../../hooks/useDebounce'
 import { useShowSearch } from '../../hooks/useShowSearch'
+
 import { useGenreFilter } from './useGenreFilter'
 import { usePagination } from './usePagination'
 import { useSearchParam } from './useSearchParam'

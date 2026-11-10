@@ -1,6 +1,8 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
+
 import { searchShows } from '../api/tvmaze'
 import type { SearchResult, Show } from '../api/types'
+
 import { useShowSearch } from './useShowSearch'
 
 vi.mock('../api/tvmaze')

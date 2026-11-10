@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import { searchShows } from '../api/tvmaze'
 import type { Show } from '../api/types'
 

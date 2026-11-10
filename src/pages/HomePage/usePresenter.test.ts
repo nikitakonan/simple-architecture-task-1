@@ -1,6 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
+
 import type { Show } from '../../api/types'
 import { useShowSearch } from '../../hooks/useShowSearch'
+
 import { usePresenter } from './usePresenter'
 
 vi.mock('../../hooks/useShowSearch')
@@ -104,7 +106,6 @@ describe('usePresenter', () => {
     const { result, rerender } = renderHook(() => usePresenter())
     expect(result.current.view).toBe('empty')
     expect(result.current.errorMessage).toBeNull()
-
     mockSearch({ status: 'loading' })
     rerender()
     expect(result.current.isRefreshing).toBe(true)

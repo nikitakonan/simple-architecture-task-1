@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react'
+
 import type { Show } from '../../../api/types'
+
 import { ShowCard } from '.'
 
 const show: Show = {

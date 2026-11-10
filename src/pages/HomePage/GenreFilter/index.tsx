@@ -1,4 +1,5 @@
 import { Chip } from '../../../ui/Chip'
+
 import styles from './GenreFilter.module.css'
 
 type GenreOption = {

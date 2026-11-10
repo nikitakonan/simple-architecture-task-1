@@ -1,5 +1,7 @@
 import { renderHook } from '@testing-library/react'
+
 import type { Show } from '../../../api/types'
+
 import { usePresenter } from './usePresenter'
 
 const show: Show = {

@@ -1,5 +1,6 @@
-import styles from './Pagination.module.css'
 import { type PaginationProps, usePresenter } from './usePresenter'
+
+import styles from './Pagination.module.css'
 
 export function Pagination(props: PaginationProps) {
   const {
