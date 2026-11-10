@@ -30,18 +30,18 @@ npm run dev
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the dev server |
-| `npm run build` | Type-check and build for production into `dist/` |
-| `npm run preview` | Serve the production build locally |
-| `npm run typecheck` | Type-check only |
-| `npm test` | Run tests in watch mode |
-| `npm run test:run` | Run all tests once |
-| `npm run check` | Run Biome lint, format check and import sorting |
-| `npm run check:fix` | Apply Biome fixes and formatting |
-| `npm run lint` | Biome lint only |
-| `npm run format` | Format all files with Biome |
+| Command             | Description                                      |
+| ------------------- | ------------------------------------------------ |
+| `npm run dev`       | Start the dev server                             |
+| `npm run build`     | Type-check and build for production into `dist/` |
+| `npm run preview`   | Serve the production build locally               |
+| `npm run typecheck` | Type-check only                                  |
+| `npm test`          | Run tests in watch mode                          |
+| `npm run test:run`  | Run all tests once                               |
+| `npm run check`     | Run Biome lint, format check and import sorting  |
+| `npm run check:fix` | Apply Biome fixes and formatting                 |
+| `npm run lint`      | Biome lint only                                  |
+| `npm run format`    | Format all files with Biome                      |
 
 To run a single test file: `npx vitest run src/pages/HomePage.test.tsx`.
 

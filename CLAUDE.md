@@ -12,15 +12,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run lint` / `npm run format`: Biome lint only / format only (with `--write`)
 - `npm test`: run Vitest in watch mode
 - `npm run test:run`: run all tests once
-- `npx vitest run src/pages/HomePage.test.tsx`: run a single test file (add `-t "<name>"` to filter by test name)
+- `npx vitest run src/pages/HomePage/HomePage.test.tsx`: run a single test file (add `-t "<name>"` to filter by test name)
 
 ## Stack and setup
 
-- Vite + React 19 + TypeScript. The entry point `src/main.tsx` renders `HomePage` directly, so there is no router yet.
+- Vite + React 19 + TypeScript. The entry point `src/main.tsx` renders `HomePage` (`src/pages/HomePage/`) directly, so there is no router yet.
 - Vitest + Testing Library, configured in `vite.config.ts` under `test`: jsdom, `globals: true` (so `describe`/`it`/`expect` need no imports), and the setup file `src/test/setup.ts`, which loads the jest-dom matchers and runs cleanup.
-- Tests are colocated as `*.test.tsx` next to the code they test. Pages live in `src/pages/`.
-- **Styling uses CSS Modules only:** each component gets its own `Component.module.css` next to `Component.tsx`, imported as `import styles from './Component.module.css'`. Global CSS is limited to `src/index.css` (resets and root variables).
-- **Biome** (`biome.json`) is the only linter and formatter; there is no ESLint or Prettier. Code style is 2-space indent, single quotes, no semicolons, and trailing commas. Biome's React and test rule sets are enabled, and `public/` is excluded.
+- **Follow `architecture.md`** for where code goes. In short: each component is a folder whose `index.tsx` is the component itself, next to `Component.module.css`, `Component.test.tsx`, and `usePresenter.ts` (all logic; the view only calls `usePresenter()`). No file may exceed 120 lines. Pages live in `src/pages/`, shared components in `src/components/` and `src/ui/`.
+- **Styling uses CSS Modules only:** import a component's styles as `import styles from './Component.module.css'`. Global CSS is limited to `src/index.css` (resets and root variables).
+- **Biome** (`biome.json`) is the only linter and formatter; there is no ESLint or Prettier. Code style is 2-space indent, single quotes, no semicolons, and trailing commas. Biome's React and test rule sets are enabled, and `public/` is excluded. Biome also enforces the architecture rules (import restrictions per folder, the 120-line limit, named exports, and the GritQL plugin in `biome-plugins/`); see section 10 of `architecture.md`.
 
 `task.md` is the homework spec (written in Russian).
 

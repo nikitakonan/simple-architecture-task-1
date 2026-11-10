@@ -1,0 +1,10 @@
+language js
+
+// A view (a component's index.tsx) may call only one hook: usePresenter().
+// All other hooks belong in usePresenter.ts. See architecture.md, section 4.
+`$hook($args)` where {
+  $hook <: r"^use[A-Z].*",
+  not $hook <: `usePresenter`,
+  $filename <: r".*/index\.tsx$",
+  register_diagnostic(span=$hook, message="A view may call only usePresenter(). Move other hooks into usePresenter.ts.")
+}

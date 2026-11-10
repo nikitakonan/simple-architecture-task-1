@@ -8,6 +8,7 @@
   "files": {
     "includes": ["**", "!!**/dist", "!public"]
   },
+  "plugins": ["./biome-plugins/view-only-presenter.grit"],
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
@@ -21,9 +22,188 @@
       "test": "recommended"
     },
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "style": {
+        "noDefaultExport": "error",
+        "noExcessiveLinesPerFile": {
+          "level": "error",
+          "options": { "maxLines": 120 }
+        },
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": [
+                  "**/components/*/*",
+                  "**/ui/*/*",
+                  "**/pages/*/*",
+                  "!**/*.module.css"
+                ],
+                "message": "Import a component by its folder, not its inner files."
+              }
+            ]
+          }
+        }
+      }
     }
   },
+  "overrides": [
+    {
+      "includes": ["*.config.ts"],
+      "linter": {
+        "rules": {
+          "style": { "noDefaultExport": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["src/**/index.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "react": {
+                    "importNames": [
+                      "use",
+                      "useCallback",
+                      "useContext",
+                      "useDeferredValue",
+                      "useEffect",
+                      "useLayoutEffect",
+                      "useMemo",
+                      "useReducer",
+                      "useRef",
+                      "useState",
+                      "useSyncExternalStore",
+                      "useTransition"
+                    ],
+                    "message": "Views only render. Put hooks in usePresenter.ts."
+                  }
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "**/components/*/*",
+                      "**/ui/*/*",
+                      "**/pages/*/*",
+                      "!**/*.module.css"
+                    ],
+                    "message": "Import a component by its folder, not its inner files."
+                  },
+                  {
+                    "group": [
+                      "**/hooks/**",
+                      "**/api/**",
+                      "**/api",
+                      "./use*",
+                      "!./usePresenter"
+                    ],
+                    "message": "A view imports only its own usePresenter."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/components/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/components/*/*",
+                      "**/ui/*/*",
+                      "**/pages/*/*",
+                      "!**/*.module.css"
+                    ],
+                    "message": "Import a component by its folder, not its inner files."
+                  },
+                  {
+                    "group": ["**/pages/**", "**/pages"],
+                    "message": "components/ must not import from pages/."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/ui/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "**/components/*/*",
+                      "**/ui/*/*",
+                      "**/pages/*/*",
+                      "!**/*.module.css"
+                    ],
+                    "message": "Import a component by its folder, not its inner files."
+                  },
+                  {
+                    "group": [
+                      "**/api/**",
+                      "**/api",
+                      "**/hooks/**",
+                      "**/components/**",
+                      "**/pages/**"
+                    ],
+                    "message": "ui/ must not depend on app code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/api/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "react": "api/ is plain TypeScript. Don't import React."
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "**/hooks/**",
+                      "**/components/**",
+                      "**/ui/**",
+                      "**/pages/**"
+                    ],
+                    "message": "api/ must not import app code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
