@@ -1,0 +1,45 @@
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: var(--control-size);
+}
+
+.count {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.count strong {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.reset {
+  height: var(--control-size);
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
