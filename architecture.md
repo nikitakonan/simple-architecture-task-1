@@ -38,10 +38,14 @@ src/
 │       ├── useGenreFilter.test.ts
 │       ├── usePagination.ts
 │       ├── usePagination.test.ts
-│       ├── Header.tsx            # used once by HomePage, so it stays in this folder
-│       ├── Header.module.css
-│       ├── ShowCard.tsx          # used once by HomePage (inside a .map)
-│       ├── ShowCard.module.css
+│       ├── Header/               # used once by HomePage: its own folder, next to the parent
+│       │   ├── index.tsx
+│       │   ├── Header.module.css
+│       │   └── Header.test.tsx
+│       ├── ShowCard/             # used once by HomePage (inside a .map)
+│       │   ├── index.tsx
+│       │   ├── ShowCard.module.css
+│       │   └── ShowCard.test.tsx
 │       └── components/           # reused inside HomePage's subtree
 │           └── Pagination/
 │               ├── index.tsx
@@ -55,6 +59,20 @@ src/
 
 ## 2. Every component lives in its own folder
 
+Two rules apply to **every** component, with no exceptions for small or
+single-use ones:
+
+1. **One component per file.** A file defines exactly one React component, and
+   that file is always the `index.tsx` of the component's folder. There are no
+   flat component files like `HomePage/Header.tsx`, and no second "helper"
+   component declared next to the main one in the same file. If you need
+   another component, give it its own folder.
+2. **Every component has its own folder.** This holds for single-use children
+   that live directly in the parent's folder (section 3), not only for
+   components in `components/`, `src/components/`, or `src/ui/`. If the
+   component has logic, its `usePresenter.ts` goes in the same folder; a
+   component without logic has no presenter (see section 4).
+
 A component folder is named after the component (PascalCase) and contains:
 
 | File                   | Required | Purpose                                                      |
@@ -65,8 +83,8 @@ A component folder is named after the component (PascalCase) and contains:
 | `usePresenter.ts`      | if logic | All of the component's logic                                 |
 | `usePresenter.test.ts` | if logic | Tests for the logic, with `renderHook`                       |
 | `useSomething.ts`      | optional | Local hooks the presenter is split into (see section 5)      |
+| `Child/`               | optional | Child components that are used once (see section 3)          |
 | `components/`          | optional | Child components that are reused in this subtree             |
-| `Child.tsx` + CSS      | optional | Child components that are used once (see section 3)          |
 
 \* You can skip the CSS module only if the component renders no elements of its
 own, for example a component that only composes other components.
@@ -105,24 +123,24 @@ Answer these questions in order:
 2. **Is it reused inside one parent's subtree (rendered from two or more places
    in it)?** Put it in that parent's `components/` folder, as a full component
    folder: `HomePage/components/Pagination/`.
-3. **Is it used only once, by one parent?** Keep it in the parent's folder as a
-   flat file, `HomePage/Header.tsx`, with its own CSS module,
-   `HomePage/Header.module.css`. It isn't exported from the parent's
-   `index.tsx`; it's an implementation detail.
+3. **Is it used only once, by one parent?** Put it in its own component folder
+   directly inside the parent's folder: `HomePage/Header/`, with `index.tsx`,
+   `Header.module.css`, `Header.test.tsx`, and `usePresenter.ts` if it has
+   logic. It isn't
+   exported from the parent's `index.tsx`; it's an implementation detail.
 
 "Used once" means a single place in the JSX. A component rendered inside one
 `.map()` is still used once.
 
-A single-use child has no logic of its own. It is a pure view that gets
-everything from the parent's presenter through props. If it needs its own
-state or effects, turn it into its own folder inside the parent's folder
-(`HomePage/SearchBar/`) with its own `usePresenter.ts`. A folder can hold only
-one `usePresenter.ts`, so this keeps the rule "one presenter per view".
+A single-use child is a full component folder like any other (section 2). If
+it needs its own state or effects, add a `usePresenter.ts` to its folder. A
+folder holds only one `usePresenter.ts`, so giving every component a folder
+keeps the rule "one presenter per view".
 
 ### Moving a component when its usage changes
 
 - A single-use child starts being used in a second place in the subtree → move
-  it to the parent's `components/`.
+  its folder into the parent's `components/`.
 - A component in `Page/components/` is needed by another page → move it to
   `src/components/` (or to `src/ui/` if it has no domain knowledge).
 - Never import from another component's `components/` folder. If you need
@@ -132,8 +150,9 @@ one `usePresenter.ts`, so this keeps the rule "one presenter per view".
 
 The view (`index.tsx`) only renders. It:
 
-- calls **one** hook, `usePresenter()`, and nothing else (`useState`,
-  `useEffect`, and data hooks go in the presenter);
+- calls **one** hook, `usePresenter()` (or `usePresenter(props)` when the
+  presenter needs the props), and nothing else (`useState`, `useEffect`, and
+  data hooks go in the presenter), or no hook at all if it has no logic;
 - maps the presenter's values to JSX and connects event handlers;
 - doesn't compute derived data (filtering, slicing, counting); the presenter
   returns it ready to render.
@@ -147,8 +166,11 @@ The presenter (`usePresenter.ts`):
 - returns a plain object with everything the view needs, already derived;
 - never returns JSX and never imports CSS.
 
-Components without logic (most `ui/` primitives, single-use children) don't
-have a presenter; they just render their props.
+`usePresenter.ts` is optional. Components without logic (most `ui/`
+primitives, many single-use children) don't have one; they just render their
+props. Add a presenter as soon as a component needs state, effects, or derived
+data. When the presenter needs the component's props, declare the props type
+in `usePresenter.ts` and call `usePresenter(props)` from the view.
 
 ### Example: HomePage
 
@@ -286,17 +308,17 @@ export function HomePage() {
 
 Notes on this example:
 
-- `Header` and `ShowCard` are each used in one place → flat files in
-  `HomePage/`.
+- `Header` and `ShowCard` are each used in one place → their own folders
+  directly in `HomePage/` (`HomePage/Header/`, `HomePage/ShowCard/`).
 - `Pagination` is rendered twice (above and below the list) → it goes in
   `HomePage/components/Pagination/`.
 - `Chip` and `Spinner` are generic → `src/ui/`. `ErrorState` is shared by
   pages → `src/components/`.
 
-### Example: a single-use child (pure view)
+### Example: a single-use child without logic
 
 ```tsx
-// src/pages/HomePage/Header.tsx
+// src/pages/HomePage/Header/index.tsx
 import styles from './Header.module.css'
 
 type HeaderProps = {
@@ -319,6 +341,9 @@ export function Header({ query, onQueryChange }: HeaderProps) {
   )
 }
 ```
+
+`Header` has no state or derived data, so its folder has no `usePresenter.ts`.
+It is still a folder (`HomePage/Header/`), not a flat `HomePage/Header.tsx`.
 
 ### Example: a UI primitive
 
@@ -480,18 +505,22 @@ pages  →  components  →  ui
   })
   ```
 
-- Single-use flat children (`Header.tsx`) are covered by the parent's tests.
-  Add a separate `Header.test.tsx` only if the child has non-trivial
-  rendering.
+- Single-use children are component folders, so they have their own
+  `Component.test.tsx` too (`HomePage/Header/Header.test.tsx`). The parent's
+  test doesn't need to repeat what the child's test already covers.
 
 ## 9. Checklist for a new component
 
 - [ ] Decide where it goes: `ui/`, `components/`, the parent's `components/`,
-  or a flat file next to the parent (section 3).
+  or a folder directly inside the parent's folder (section 3).
 - [ ] Create the folder with `index.tsx` (the component itself),
-  `Component.module.css`, and `Component.test.tsx`.
-- [ ] Put the logic in `usePresenter.ts` and test it in `usePresenter.test.ts`.
-- [ ] Make sure the view calls only `usePresenter()` and renders.
+  `Component.module.css`, and `Component.test.tsx`, even if the component is
+  small or used once.
+- [ ] Keep one component per file: `index.tsx` defines only this component.
+- [ ] If it has logic, put it in `usePresenter.ts` and test it in
+  `usePresenter.test.ts`.
+- [ ] Make sure the view calls only `usePresenter()` / `usePresenter(props)`
+  (or no hook at all) and renders.
 - [ ] Keep every file at 120 lines or fewer; split views into children and
   presenters into local hooks (section 5).
 - [ ] Import other components only by their folder path, never their inner
@@ -523,13 +552,16 @@ Things to know when changing the config:
 - Import patterns match the import path as written. A relative import that
   doesn't name the folder, like `../HomePage/usePresenter` from a sibling
   page, isn't caught.
-- The view rules apply to `index.tsx` only, not to flat single-use children
-  like `Header.tsx`.
+- The view rules apply to `index.tsx` files. Since every component lives in
+  an `index.tsx` (section 2), they cover every component; a component in any
+  other file escapes them, which is one more reason not to write one.
 
 These rules can't be checked by Biome, so they stay with code review and the
 checklist above:
 
 - every component folder has its `.module.css` and `.test.tsx` files;
+- a file defines only one component, and only in `index.tsx` (no flat
+  component files like `Header.tsx`);
 - a component is placed by how often it's used (section 3);
 - a child never imports from its parent;
 - a presenter returns no JSX and imports no CSS.
